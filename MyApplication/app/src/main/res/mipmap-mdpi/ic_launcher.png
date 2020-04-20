@@ -1,0 +1,57 @@
+// Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+// @dart = 2.6
+
+part of dart.collection;
+
+/// Abstract implementation of a list.
+///
+/// `ListBase` can be used as a base class for implementing the `List`
+/// interface.
+///
+/// All operations are defined in terms of `length`, `operator[]`,
+/// `operator[]=` and `length=`, which need to be implemented.
+///
+/// *NOTICE*: Forwarding just these four operations to a normal growable [List]
+/// (as created by `new List()`) will give very bad performance for `add` and
+/// `addAll` operations of `ListBase`. These operations are implemented by
+/// increasing the length of the list by one for each `add` operation, and
+/// repeatedly increasing the length of a growable list is not efficient.
+/// To avoid this, either override 'add' and 'addAll' to also forward directly
+/// to the growable list, or, preferably, use `DelegatingList` from
+/// "package:collection/wrappers.dart" instead.
+abstract class ListBase<E> extends Object with ListMixin<E> {
+  /// Converts a [List] to a [String].
+  ///
+  /// Converts [list] to a string by converting each element to a string (by
+  /// calling [Object.toString]), joining them with ", ", and wrapping the
+  /// result in "[" and "]".
+  ///
+  /// Handles circular references where converting one of the elements
+  /// to a string ends up converting [list] to a string again.
+  static String listToString(List list) =>
+      IterableBase.iterableToFullString(list, '[', ']');
+}
+
+/// Base implementation of a [List] class.
+///
+/// `ListMixin` can be used as a mixin to make a class implement
+/// the `List` interface.
+///
+/// This implements all read operations using only the `length` and
+/// `operator[]` members. It implements write operations using those and
+/// `length=` and `operator[]=`
+///
+/// *NOTICE*: Forwarding just these four operations to a normal growable [List]
+/// (as created by `new List()`) will give very bad performance for `add` and
+/// `addAll` operations of `ListBase`. These operations are implemented by
+/// increasing the length of the list by one for each `add` operation, and
+/// repeatedly increasing the length of a growable list is not efficient.
+/// To avoid this, either override 'add' and 'addAll' to also forward directly
+/// to the growable list, or, if possible, use `DelegatingList` from
+/// "package:collection/wrappers.dart" instead.
+abstract class ListMixin<E> implements List<E> {
+  // Iterable interface.
+  // TODO(lrn): When we get com
